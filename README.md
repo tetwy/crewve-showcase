@@ -78,4 +78,4 @@ Bu dosyalar tek başına çalışan bir proje değildir; Next.js ve `@supabase/s
 
 ## Lisans
 
-<!-- TODO: vitrin reposu için lisans seçimi -->
+MIT — ayrıntı için [LICENSE](LICENSE).
