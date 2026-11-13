@@ -2,15 +2,15 @@
 
 **Keep your whole life in one dashboard: money, meals, workouts, habits, notes and calendar. Add entries on the web, or just type them in Telegram.**
 
-This repo is the showcase for crewve. The app's source code lives in a private repo. Here I share what the product does, how it is built, and a few examples picked from the code.
+Hi, this is the showcase repo for crewve. The app's source code lives in a private repo, so here I'm sharing what the product does, how I built it, and a few examples picked from the code.
 
 <!-- TODO: screenshot — dashboard -->
 <!-- TODO: screenshot — adding an entry from Telegram and the confirmation flow -->
 <!-- TODO: screenshot — reports -->
 
-## Who it is for and what problem it solves
+## Who it's for and what problem it solves
 
-It is for anyone who tracks spending in one app, meals in another, workouts in notes and habits in their head. Scattered tracking is tracking you can't keep up. crewve brings everything into one account and makes adding an entry as easy as possible: in Telegram, writing "50 lira yemek" (50 lira, food) or "öğle tavuk pilav yedim" (had chicken and rice for lunch) is enough.
+I made this for anyone who tracks spending in one app, meals in another, workouts in notes and habits in their head (I was doing exactly that). Scattered tracking is tracking you can't keep up. crewve brings everything into one account and makes adding an entry as easy as possible: in Telegram, writing "50 lira yemek" (50 lira, food) or "öğle tavuk pilav yedim" (had chicken and rice for lunch) is enough.
 
 ## What it offers
 
@@ -29,7 +29,7 @@ It is for anyone who tracks spending in one app, meals in another, workouts in n
 
 - **Next.js 16 + React 19 + TypeScript**, App Router.
 - **Supabase** (Postgres, Auth) with row-level security (RLS): every user can only reach their own data.
-- **Validated data:** model output coming from Telegram is never written to the database before it passes a Zod schema.
+- **Validated data:** model output coming from Telegram never gets written to the database before it passes a Zod schema.
 - **Quality gates:** Husky + lint-staged, ESLint, Prettier and conventional commits (commitlint).
 
 ```mermaid
@@ -74,7 +74,7 @@ The quality gates run locally at commit time:
 - [`src/lib/env.ts`](src/lib/env.ts): validates environment variables with Zod. It keeps the variables exposed to the client and the ones read only on the server in separate schemas, and the app stops at startup if a value is missing or invalid.
 - [`middleware.ts`](middleware.ts) and [`src/lib/supabase/middleware.ts`](src/lib/supabase/middleware.ts): refresh the Supabase session through cookies on every request. They redirect signed-out users from protected pages to login, and signed-in users from the login page to the dashboard.
 
-These files are not a standalone project. They expect the Next.js and `@supabase/ssr` dependencies.
+Btw, these files aren't a standalone project. They expect the Next.js and `@supabase/ssr` dependencies.
 
 ## License
 
