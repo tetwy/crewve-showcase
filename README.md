@@ -1,81 +1,81 @@
 # crewve
 
-**Hayatını tek panelde topla: para, öğün, antrenman, alışkanlık, not ve takvim. Kaydı web'den gir ya da Telegram'dan sadece yaz.**
+**Keep your whole life in one dashboard: money, meals, workouts, habits, notes and calendar. Add entries on the web, or just type them in Telegram.**
 
-Bu repo crewve'un vitrinidir. Uygulamanın kaynak kodu private repoda durur; burada ürünün ne yaptığı, nasıl kurulduğu ve koddan seçilmiş örnekler var.
+This repo is the showcase for crewve. The app's source code lives in a private repo. Here I share what the product does, how it is built, and a few examples picked from the code.
 
-<!-- TODO: ekran görüntüsü — dashboard -->
-<!-- TODO: ekran görüntüsü — Telegram'dan kayıt ekleme ve onay akışı -->
-<!-- TODO: ekran görüntüsü — raporlar -->
+<!-- TODO: screenshot — dashboard -->
+<!-- TODO: screenshot — adding an entry from Telegram and the confirmation flow -->
+<!-- TODO: screenshot — reports -->
 
-## Kimin için, hangi sorunu çözüyor
+## Who it is for and what problem it solves
 
-Harcamaları bir uygulamada, yemekleri başka bir uygulamada, antrenmanları notlarda, alışkanlıkları kafada tutan herkes için. Dağınık takip, sürdürülemeyen takiptir. crewve hepsini tek hesapta toplar ve kayıt girmeyi en kolay hale getirir: Telegram'a "50 lira yemek" ya da "öğle tavuk pilav yedim" yazmak yeterli.
+It is for anyone who tracks spending in one app, meals in another, workouts in notes and habits in their head. Scattered tracking is tracking you can't keep up. crewve brings everything into one account and makes adding an entry as easy as possible: in Telegram, writing "50 lira yemek" (50 lira, food) or "öğle tavuk pilav yedim" (had chicken and rice for lunch) is enough.
 
-## Neler sunuyor
+## What it offers
 
-- **Finans:** gelir ve gider, kategoriler, aylık ve 30 günlük trend grafikleri.
-- **Öğünler, antrenmanlar ve alışkanlıklar:** sağlık ve rutin takibi; alışkanlıklarda seri (streak) takibi.
-- **Notlar ve takvim:** etiketli notlar, etiket filtresi ve takvim görünümü.
-- **Telegram entegrasyonu:** serbest metinle kayıt ekle. Mesaj ilgili modüle yönlendirilir, şemayla doğrulanır ve sen onaylayınca kaydedilir. Hesap bağlama tek kullanımlık, süreli bir kodla yapılır.
-- **Günlük özet bildirimi:** gün sonunda Telegram'dan özet gelir.
-- **Dashboard ve raporlar:** tüm modüllerin özeti tek ekranda, ayrıntılar rapor sayfasında.
-- **Başarımlar:** rozetler ve paylaşılabilir başarım kartı.
-- **Dışa aktarma:** verini JSON olarak indir, CSV'ye çevir.
-- **Gizlilik ayarları:** verin senin; ayarlardan kontrol edersin.
-- **Hazırlık ve konfor:** onboarding akışı, Türkçe ve İngilizce arayüz, karanlık mod, blog.
+- **Finance:** income and expenses, categories, and monthly and 30-day trend charts.
+- **Meals, workouts and habits:** health and routine tracking, with streak tracking for habits.
+- **Notes and calendar:** tagged notes, a tag filter and a calendar view.
+- **Telegram integration:** add entries with free text. The message is routed to the right module, validated against a schema, and saved once you confirm. Linking your account uses a one-time code that expires.
+- **Daily summary notification:** at the end of the day, a summary arrives in Telegram.
+- **Dashboard and reports:** a summary of every module on one screen, with details on the reports page.
+- **Achievements:** badges and a shareable achievement card.
+- **Export:** download your data as JSON and convert it to CSV.
+- **Privacy settings:** your data is yours, and you control it from settings.
+- **Getting started and comfort:** an onboarding flow, Turkish and English interface, dark mode and a blog.
 
-## Teknik güç
+## Under the hood
 
 - **Next.js 16 + React 19 + TypeScript**, App Router.
-- **Supabase** (Postgres, Auth) ve satır düzeyi güvenlik (RLS): her kullanıcı yalnız kendi verisine erişir.
-- **Doğrulanmış veri:** Telegram'dan gelen model çıktısı Zod şemasından geçmeden veritabanına yazılmaz.
-- **Kalite kapıları:** Husky + lint-staged, ESLint, Prettier ve conventional commits (commitlint).
+- **Supabase** (Postgres, Auth) with row-level security (RLS): every user can only reach their own data.
+- **Validated data:** model output coming from Telegram is never written to the database before it passes a Zod schema.
+- **Quality gates:** Husky + lint-staged, ESLint, Prettier and conventional commits (commitlint).
 
 ```mermaid
 flowchart LR
-    U[Tarayıcı] --> MW[middleware<br/>oturum yenileme + yönlendirme]
-    MW --> PG[App Router sayfaları]
-    PG --> RQ[React Query hook'ları]
+    U[Browser] --> MW[middleware<br/>session refresh + redirects]
+    MW --> PG[App Router pages]
+    PG --> RQ[React Query hooks]
     RQ --> SB[(Supabase<br/>Postgres + Auth + RLS)]
     TG[Telegram] --> WH[/api/telegram/webhook/]
-    WH --> LLM[Metin yönlendirici<br/>+ Zod doğrulama]
-    WH --> PEND[bekleyen kayıt<br/>kullanıcı onayı]
+    WH --> LLM[Text router<br/>+ Zod validation]
+    WH --> PEND[pending entry<br/>user confirmation]
     PEND --> SB
-    CRON[Zamanlanmış fonksiyon] --> DAILY[/api/notifications/daily/]
+    CRON[Scheduled function] --> DAILY[/api/notifications/daily/]
     DAILY --> TG
 ```
 
-## Teknoloji
+## Stack
 
-| Alan | Seçim |
+| Area | Choice |
 | --- | --- |
 | Framework | Next.js 16 (App Router), React 19, TypeScript |
-| Veri ve kimlik | Supabase (Postgres, Auth, RLS), `@supabase/ssr` |
-| İstemci durumu | TanStack React Query |
+| Data and auth | Supabase (Postgres, Auth, RLS), `@supabase/ssr` |
+| Client state | TanStack React Query |
 | UI | Tailwind CSS 4, shadcn/ui (Radix), framer-motion, Recharts |
-| Doğrulama | Zod |
-| Doğal dil çözümleme | Groq API (JSON çıktı) |
+| Validation | Zod |
+| Natural language parsing | Groq API (JSON output) |
 | Bot | Telegram Bot API (webhook) |
-| Dağıtım | Netlify (zamanlanmış fonksiyon) |
+| Deployment | Netlify (scheduled function) |
 
-## Kod kalitesi
+## Code quality
 
-Kalite kapıları commit anında yerelde çalışır:
+The quality gates run locally at commit time:
 
-- Husky `pre-commit`: lint-staged ile değişen dosyalara ESLint `--fix` ve Prettier
+- Husky `pre-commit`: ESLint `--fix` and Prettier on changed files through lint-staged
 - Husky `commit-msg`: commitlint (conventional commits)
-- Özellik başına dal ve PR akışı (geçmişte 21 birleştirilmiş PR)
+- A branch and PR flow for each feature (21 merged PRs so far)
 
-<!-- TODO: test eklenirse kanıtı buraya -->
+<!-- TODO: add test evidence here once tests exist -->
 
-## Örnek modüller
+## Example modules
 
-- [`src/lib/env.ts`](src/lib/env.ts): ortam değişkenlerini Zod ile doğrular; istemciye açık ve yalnız sunucuda okunan değişkenleri ayrı şemalarda tutar, eksik ya da hatalı değerde uygulama açılışta durur.
-- [`middleware.ts`](middleware.ts) ve [`src/lib/supabase/middleware.ts`](src/lib/supabase/middleware.ts): her istekte Supabase oturumunu çerezler üzerinden yeniler; oturumsuz kullanıcıyı korumalı sayfalardan girişe, oturumlu kullanıcıyı giriş sayfasından panele yönlendirir.
+- [`src/lib/env.ts`](src/lib/env.ts): validates environment variables with Zod. It keeps the variables exposed to the client and the ones read only on the server in separate schemas, and the app stops at startup if a value is missing or invalid.
+- [`middleware.ts`](middleware.ts) and [`src/lib/supabase/middleware.ts`](src/lib/supabase/middleware.ts): refresh the Supabase session through cookies on every request. They redirect signed-out users from protected pages to login, and signed-in users from the login page to the dashboard.
 
-Bu dosyalar tek başına çalışan bir proje değildir; Next.js ve `@supabase/ssr` bağımlılıklarını bekler.
+These files are not a standalone project. They expect the Next.js and `@supabase/ssr` dependencies.
 
-## Lisans
+## License
 
-MIT — ayrıntı için [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE) for details.

@@ -20,7 +20,7 @@ export const clientEnv = clientSchema.parse({
     process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME,
 });
 
-// Sadece server tarafinda cagir (API routes, server components)
+// Call this on the server only (API routes, server components)
 export function getServerEnv() {
   return serverSchema.parse(process.env);
 }

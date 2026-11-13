@@ -26,7 +26,7 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Session'i yenile (token refresh)
+  // Refresh the session (token refresh)
   const {
     data: { user },
   } = await supabase.auth.getUser();
